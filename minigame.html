@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock, Paper, Scissors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 30px; }
+    .score { font-size: 1.5em; margin: 10px 0; }
+    .result { font-size: 1.2em; margin: 10px 0; }
+    .choices button { font-size: 1.2em; margin: 5px; padding: 10px 20px; }
+    .animation { font-size: 2em; margin: 15px 0; min-height: 2em; }
+    #playAgain { display: none; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h1>Rock, Paper, Scissors</h1>
+  <div class="score" id="score">Player: 0 &nbsp; Computer: 0</div>
+  <div class="result" id="result"></div>
+  <div class="choices" id="choices">
+    <button onclick="playerChoice('Rock')">Rock</button>
+    <button onclick="playerChoice('Paper')">Paper</button>
+    <button onclick="playerChoice('Scissors')">Scissors</button>
+  </div>
+  <div class="animation" id="animation"></div>
+  <button id="playAgain" onclick="resetGame()">Play Again</button>
+
+  <script>
+    const CHOICES = ['Rock', 'Paper', 'Scissors'];
+    const WIN_RULES = {
+      'RockScissors': true,
+      'PaperRock': true,
+      'ScissorsPaper': true
+    };
+    let playerScore = 0;
+    let computerScore = 0;
+    let animating = false;
+
+    function playerChoice(playerPick) {
+      if (animating) return;
+      const computerPick = CHOICES[Math.floor(Math.random() * 3)];
+      animateChoices(playerPick, computerPick);
+    }
+
+    function animateChoices(playerPick, computerPick) {
+      animating = true;
+      const animation = document.getElementById('animation');
+      animation.textContent = 'Rock...';
+      setTimeout(() => animation.textContent = 'Paper...', 400);
+      setTimeout(() => animation.textContent = 'Scissors...', 800);
+      setTimeout(() => showResult(playerPick, computerPick), 1200);
+    }
+
+    function showResult(playerPick, computerPick) {
+      document.getElementById('animation').textContent =
+        `You: ${playerPick} | Computer: ${computerPick}`;
+      let result;
+      if (playerPick === computerPick) {
+        result = 'draw';
+      } else if (WIN_RULES[playerPick + computerPick]) {
+        result = 'win';
+      } else {
+        result = 'lose';
+      }
+      if (result === 'win') {
+        playerScore++;
+        document.getElementById('result').textContent = 'You win this round!';
+      } else if (result === 'lose') {
+        computerScore++;
+        document.getElementById('result').textContent = 'Computer wins this round!';
+      } else {
+        document.getElementById('result').textContent = "It's a draw!";
+      }
+      document.getElementById('score').textContent =
+        `Player: ${playerScore}   Computer: ${computerScore}`;
+      checkGameOver();
+      animating = false;
+    }
+
+    function checkGameOver() {
+      if (playerScore === 3 || computerScore === 3) {
+        if (playerScore === 3) {
+          document.getElementById('result').textContent = 'Congratulations! You won the match!';
+        } else {
+          document.getElementById('result').textContent = 'Sorry, the computer won the match.';
+        }
+        document.getElementById('choices').style.display = 'none';
+        document.getElementById('playAgain').style.display = 'inline-block';
+      }
+    }
+
+    function resetGame() {
+      playerScore = 0;
+      computerScore = 0;
+      document.getElementById('score').textContent = 'Player: 0   Computer: 0';
+      document.getElementById('result').textContent = '';
+      document.getElementById('animation').textContent = '';
+      document.getElementById('choices').style.display = 'block';
+      document.getElementById('playAgain').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
